@@ -21,20 +21,27 @@
   },
   "dependencies": {
     "base-plugins": "^0.4.5",
+    "debug": "^2.2.0",
     "define-property": "^0.2.5",
     "extend-shallow": "^2.0.1",
+    "global-modules": "^0.2.0",
     "is-absolute": "^0.2.3",
     "kind-of": "^3.0.2",
+    "lazy-cache": "^1.0.3",
     "resolve": "^1.1.7"
   },
   "devDependencies": {
     "base": "^0.8.1",
+    "base-option": "^0.7.0",
     "gulp": "^3.9.1",
     "gulp-eslint": "^2.0.0",
     "gulp-format-md": "^0.1.7",
     "gulp-istanbul": "^0.10.3",
     "gulp-mocha": "^2.2.0",
-    "mocha": "*"
+    "has-glob": "^0.1.1",
+    "mocha": "*",
+    "resolve-up": "^0.5.2",
+    "templates": "^0.15.9"
   },
   "verb": {
     "run": true,
