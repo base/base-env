@@ -1,6 +1,6 @@
 {
   "name": "base-env",
-  "description": "Runner plugin for base-methods, for building up the user's environment object.",
+  "description": "Base plugin, creates a normalized environment object from a function, filepath or instance of base.",
   "version": "0.1.0",
   "homepage": "https://github.com/jonschlinkert/base-env",
   "author": "Jon Schlinkert (https://github.com/jonschlinkert)",

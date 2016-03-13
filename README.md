@@ -1,6 +1,6 @@
 # base-env [![NPM version](https://img.shields.io/npm/v/base-env.svg)](https://www.npmjs.com/package/base-env) [![Build Status](https://img.shields.io/travis/jonschlinkert/base-env.svg)](https://travis-ci.org/jonschlinkert/base-env)
 
-> Runner plugin for base-methods, for building up the user's environment object.
+> Base plugin, creates a normalized environment object from a function, filepath or instance of base.
 
 ## Install
 
