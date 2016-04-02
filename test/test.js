@@ -10,25 +10,6 @@ var base;
 
 var fixtures = path.resolve.bind(path, __dirname, 'fixtures');
 
-describe('base-env error', function() {
-  beforeEach(function() {
-    base = new Base();
-    base.registered = {};
-    delete base.run;
-  });
-
-  it('should throw an error when base-plugins is not registered', function(cb) {
-    try {
-      base.use(baseEnv());
-      cb(new Error('expected an error'));
-    } catch (err) {
-      assert(err);
-      assert.equal(err.message, 'expected base-plugins to be registered');
-      cb();
-    }
-  });
-});
-
 describe('base-env', function() {
   beforeEach(function() {
     Base.use(plugins());

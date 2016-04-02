@@ -16,32 +16,9 @@ var EnvFn = require('./lib/fn');
 module.exports = function(config) {
   config = config || {};
 
-  return function(app) {
-    if (this.isRegistered('base-env')) return;
+  return function baseEnv(app) {
+    if (!isValidInstance(this)) return;
     debug('initializing');
-
-    if (typeof this.run !== 'function') {
-      throw new TypeError('expected base-plugins to be registered');
-    }
-
-    /**
-     * Getter/setter for adding a `namespace` property to `app`. This
-     * will be removed when `base-namespace` is published
-     */
-
-    if (typeof this.namespace === 'undefined') {
-      var namespace = null;
-      this.define('namespace', {
-        configurable: true,
-        set: function(val) {
-          namespace = val;
-        },
-        get: function() {
-          var name = namespace || this._name;
-          return this.parent ? (this.parent.namespace + '.' + name) : name;
-        }
-      });
-    }
 
     /**
      * Create an `env` object with the given `name`, function, filepath
@@ -57,9 +34,11 @@ module.exports = function(config) {
     this.define('createEnv', function(name, val, options) {
       debug('createEnv: "%s"', name);
 
-      // if the last argument is a function or string, then swap
-      // `val` and `options`
-      if (typeof options === 'function' || typeof options === 'string') {
+      if (name === '' || typeof name !== 'string') {
+        throw new TypeError('expected name to be a string');
+      }
+
+      if (utils.isApp(options)) {
         var temp = options;
         options = val;
         val = temp;
@@ -67,7 +46,7 @@ module.exports = function(config) {
 
       // if val is an object, and not an instance of `base`, then
       // we can assume it's an options object
-      if (utils.typeOf(val) === 'object' && !val.isBase) {
+      if (utils.isObject(val) && !utils.isApp(val)) {
         options = val;
         val = name;
       }
@@ -78,26 +57,44 @@ module.exports = function(config) {
         val = name;
       }
 
-      if (name === '' || typeof name !== 'string') {
-        throw new TypeError('expected name to be a string');
-      }
+      var aliasFn = opts.toAlias || this.toAlias || opts.alias;
+      delete opts.alias;
 
-      function env(app, val) {
-        var aliasFn = opts.toAlias || app.toAlias;
+      function env(val) {
         return utils.extend({ aliasFn: aliasFn }, opts, val);
       }
 
       switch (utils.typeOf(val)) {
         case 'string':
-          return new EnvPath(name, env(this, { path: val }));
+          this.env = new EnvPath(name, env({ path: val }), this);
+          break;
         case 'object':
-          return new EnvApp(name, env(this, { app: val }));
+          this.env = new EnvApp(name, env({ app: val }), this);
+          break;
         case 'function':
-          return new EnvFn(name, env(this, { fn: val }));
+          this.env = new EnvFn(name, env({ fn: val }), this);
+          break;
         default: {
           throw new Error('cannot create env for "' + name + '" from "' + val + '"');
         }
       }
+      return this.env;
     });
+
+    return baseEnv;
   };
 };
+
+function isValidInstance(app) {
+  var fn = app.options.validatePlugin;
+  if (typeof fn === 'function' && !fn(app)) {
+    return false;
+  }
+  if (!app.isApp) {
+    return false;
+  }
+  if (app.isRegistered('base-env')) {
+    return false;
+  }
+  return true;
+}

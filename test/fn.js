@@ -85,13 +85,13 @@ describe('functions', function() {
     it('should invoke a function with the given context', function() {
       var env = base.createEnv('readme', function() {});
       var app = new Base();
-      assert.deepEqual(env.invoke(app, app.base), env.app);
+      assert.deepEqual(env.invoke(app), env.app);
     });
 
     it('should return the cached instance when `invoke` is called', function() {
       var env = base.createEnv('readme', function() {});
       var app = new Base();
-      assert.deepEqual(env.invoke(app, app.base), env.app);
+      assert.deepEqual(env.invoke(app), env.app);
     });
 
     it('should merge options onto the invoked instance', function() {
@@ -219,7 +219,7 @@ describe('functions', function() {
       var count = 0;
 
       var env = base.createEnv('foo-bar-baz', function(app, base, env, options) {
-        assert.equal(app.namespace, 'base.base.foo-bar-baz');
+        assert.equal(app.namespace, 'foo-bar-baz');
         count++;
       });
 
@@ -240,7 +240,7 @@ describe('functions', function() {
       var count = 0;
 
       var env = base.createEnv('foo-bar-baz', function(app, base, env, options) {
-        assert.equal(this.namespace, 'base.base.foo-bar-baz');
+        assert.equal(this.namespace, 'foo-bar-baz');
         count++;
       });
 
