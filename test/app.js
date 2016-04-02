@@ -43,6 +43,12 @@ describe('instances', function() {
       assert.deepEqual(env.invoke(), env.app);
     });
 
+    it('should wrap exported instances in a function', function() {
+      var env = base.createEnv(fixtures('instance'));
+      assert.equal(typeof env.fn, 'function');
+      assert.deepEqual(env.fn(), require(fixtures('instance')));
+    });
+
     it('should merge options onto the invoked instance', function() {
       var app = new Base();
       app.options.a = 'b';
@@ -50,7 +56,23 @@ describe('instances', function() {
       var env = base.createEnv('foo-bar-baz', app);
       assert.equal(typeof app.options.c, 'undefined');
       assert.equal(app.options.a, 'b');
-      env.invoke({c: 'd'})
+      env.invoke({c: 'd'});
+      assert.equal(app.options.a, 'b');
+      assert.equal(typeof app.options.c, 'undefined');
+    });
+
+    it('should ', function() {
+      var app = new Base();
+      var foo = new Base();
+      foo.options.x = 'blah';
+      foo.cache.one = 'blah';
+      app.options.a = 'b';
+      app.cache.two = 'b';
+
+      var env = base.createEnv('foo-bar-baz', app);
+      assert.equal(typeof app.options.c, 'undefined');
+      assert.equal(app.options.a, 'b');
+      env.invoke(foo, {c: 'd'});
       assert.equal(app.options.a, 'b');
       assert.equal(typeof app.options.c, 'undefined');
     });
@@ -63,7 +85,7 @@ describe('instances', function() {
       var env = base.createEnv('foo-bar-baz', app);
       assert.equal(typeof app.options.c, 'undefined');
       assert.equal(app.options.a, 'b');
-      env.invoke({c: 'd'})
+      env.invoke({c: 'd'});
       assert.equal(app.options.a, 'b');
       assert.equal(app.options.c, 'd');
     });
@@ -76,9 +98,9 @@ describe('instances', function() {
       var env = base.createEnv('foo-bar-baz', foo);
       assert.equal(typeof foo.options.c, 'undefined');
       assert.equal(foo.options.a, 'b');
-      env.invoke(bar, {c: 'd'})
+      env.invoke(bar, {c: 'd'});
       assert.equal(foo.options.a, 'b');
-      assert.equal(foo.options.c, 'd');
+      assert.equal(typeof foo.options.c, 'undefined');
     });
   });
 
@@ -147,7 +169,7 @@ describe('instances', function() {
 
     it('should support a custom alias function', function() {
       var env = base.createEnv('foo-bar-baz', new Base(), {
-        aliasFn: function() {
+        toAlias: function() {
           return 'foo';
         }
       });
@@ -164,7 +186,7 @@ describe('instances', function() {
 
     it('should return true when val matches env.alias', function() {
       var env = base.createEnv('foo-bar-baz', new Base(), {
-        aliasFn: function() {
+        toAlias: function() {
           return 'foo';
         }
       });
@@ -173,7 +195,7 @@ describe('instances', function() {
 
     it('should return false when val does not match', function() {
       var env = base.createEnv('foo-bar-baz', new Base(), {
-        aliasFn: function() {
+        toAlias: function() {
           return 'foo';
         }
       });

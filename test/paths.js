@@ -68,6 +68,17 @@ describe('filepaths', function() {
       assert.deepEqual(env.invoke(app, app.base), env.app);
     });
 
+    it('should wrap cached instances in a function', function() {
+      var env = base.createEnv('readme', fixtures('generate-node'));
+      var app = new Base();
+      assert.deepEqual(env.invoke(app, app.base), env.app);
+    });
+
+    it('should return null on env.app when env has not been invoked', function() {
+      var env = base.createEnv('readme', fixtures('generate-node'));
+      assert.equal(env.app, null);
+    });
+
     it('should invoke an instance', function() {
       var env = base.createEnv('readme', fixtures('instance'));
       var app = new Base();
@@ -206,7 +217,7 @@ describe('filepaths', function() {
         env.path;
         cb(new Error('expected an error'));
       } catch (err) {
-        assert.equal(err.message, 'Cannot find module \'/Users/jonschlinkert/dev/base/base-env/node_modules/npm:dfosfjsslkslkfr\'');
+        assert.equal(err.message, 'Cannot find module \'/usr/local/lib/node_modules/dfosfjsslkslkfr\'');
         cb();
       }
     });
@@ -292,7 +303,7 @@ describe('filepaths', function() {
 
     it('should support a custom alias function', function() {
       var env = base.createEnv('verb-readme-generator', fixtures('verb-readme-generator'), {
-        aliasFn: function(name) {
+        toAlias: function(name) {
           return name.replace(/^verb-(.*?)-generator/, '$1');
         }
       });
@@ -302,7 +313,7 @@ describe('filepaths', function() {
 
     it('should support a custom alias function when one arg is passed', function() {
       var env = base.createEnv(fixtures('verb-readme-generator'), {
-        aliasFn: function(name) {
+        toAlias: function(name) {
           return name.replace(/^verb-(.*?)-generator/, '$1');
         }
       });
@@ -328,7 +339,7 @@ describe('filepaths', function() {
 
     it('should return true when val matches env.alias', function() {
       var env = base.createEnv('readme', fixtures('verb-readme-generator'), {
-        aliasFn: function() {
+        toAlias: function() {
           return 'foo';
         }
       });
@@ -338,7 +349,7 @@ describe('filepaths', function() {
 
     it('should return false when val does not match', function() {
       var env = base.createEnv('foo-bar-baz', new Base(), {
-        aliasFn: function() {
+        toAlias: function() {
           return 'foo';
         }
       });

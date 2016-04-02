@@ -74,12 +74,6 @@ describe('functions', function() {
       }
     });
 
-    it('should wrap exported instances in a function', function() {
-      var env = base.createEnv(fixtures('instance'));
-      assert.equal(typeof env.fn, 'function');
-      assert.deepEqual(env.fn(), require(fixtures('instance')));
-    });
-
     it('should expose exported instances on env.app', function() {
       var env = base.createEnv(fixtures('instance'));
       assert.deepEqual(env.app, require(fixtures('instance')));
@@ -141,8 +135,8 @@ describe('functions', function() {
         app.x = 'z';
       });
 
-      env.invoke(foo)
-      assert.equal(typeof foo.x, 'undefined');
+      env.invoke(foo);
+      assert.equal(foo.x, 'z');
     });
 
     it('should expose the first instance as `base` to the invoked function', function() {
@@ -242,7 +236,8 @@ describe('functions', function() {
       var count = 0;
 
       var env = base.createEnv('whatever', function(app, base, env, options) {
-        assert.equal(app.namespace, 'foo.bar.baz.whatever');
+        assert.equal(app.namespace, 'foo.bar.baz');
+        assert.equal(env.namespace, 'foo.bar.baz.whatever');
         count++;
       });
 
@@ -250,7 +245,32 @@ describe('functions', function() {
       assert.equal(count, 1);
     });
 
-    it('should expose namespace on the instance', function() {
+    it('should expose `env.namespace`', function() {
+      var foo = new Base();
+      foo.is('foo');
+      foo.a = 'a';
+      var bar = new Base();
+      bar.is('bar');
+      bar.b = 'b';
+      bar.parent = foo;
+      var baz = new Base();
+      baz.is('baz');
+      baz.c = 'c';
+      baz.parent = bar;
+
+      var count = 0;
+
+      var env = base.createEnv('whatever', function(app, base, env, options) {
+        assert.equal(app.namespace, 'foo.bar.baz');
+        assert.equal(env.namespace, 'foo.bar.baz.whatever');
+        count++;
+      });
+
+      env.invoke(baz);
+      assert.equal(count, 1);
+    });
+
+    it('should expose `app.namespace` on the instance', function() {
       var foo = new Base();
       foo.is('foo');
       foo.a = 'a';
@@ -266,7 +286,8 @@ describe('functions', function() {
       var count = 0;
 
       var env = base.createEnv('last', function(app, base, env, options) {
-        assert.equal(this.namespace, 'foo.bar.baz.last');
+        assert.equal(this.namespace, 'foo.bar.baz');
+        assert.equal(env.namespace, 'foo.bar.baz.last');
         count++;
       });
 
@@ -287,7 +308,8 @@ describe('functions', function() {
       var count = 0;
 
       var env = base.createEnv('foo-bar-baz', function(app, base, env, options) {
-        assert.equal(env.namespace, 'foo-bar-baz');
+        assert.equal(app.namespace, 'base.base.base');
+        assert.equal(env.namespace, 'base.base.base.foo-bar-baz');
         count++;
       });
 
@@ -315,7 +337,7 @@ describe('functions', function() {
       var count = 0;
 
       var env = qux.createEnv('xyz', function(app, base, env, options) {
-        assert.equal(this.namespace, 'foo.bar.baz.xyz');
+        assert.equal(env.namespace, 'foo.bar.baz.xyz');
         count++;
       });
 
@@ -336,13 +358,25 @@ describe('functions', function() {
       var env = base.createEnv('foo', function() {});
       assert(/<Env "foo" \[function\]>/.test(env.inspect()));
     });
+
+    it('should show the function name when env function has a name', function() {
+      var env = base.createEnv('foo', function whatever() {});
+      assert(/<Env "foo" \[function whatever\]>/.test(env.inspect()));
+    });
+  });
+
+  describe('env.app', function() {
+    it('should expose env.app after `env.invoke` is called', function() {
+      var env = base.createEnv('foo', function() {});
+      env.invoke();
+      assert.equal(env.app.isApp, true);
+    });
   });
 
   describe('env.namespace', function() {
     it('should expose a namespace property', function() {
       var env = base.createEnv('foo', function() {});
-      assert(env.namespace);
-      assert.equal(typeof env.namespace, 'string');
+      assert.equal(env.namespace, 'foo');
     });
 
     it('should set env.name to env.namespace', function() {
@@ -382,8 +416,18 @@ describe('functions', function() {
 
     it('should support a custom alias function', function() {
       var env = base.createEnv('verb-readme-generator', fixtures('verb-readme-generator'), {
-        aliasFn: function(name) {
+        toAlias: function(name) {
           return name.replace(/^verb-(.*?)-generator/, '$1');
+        }
+      });
+      assert.equal(env.alias, 'readme');
+      assert.equal(env.name, 'verb-readme-generator');
+    });
+
+    it('should expose env as `this` to custom alias function', function() {
+      var env = base.createEnv('verb-readme-generator', fixtures('verb-readme-generator'), {
+        toAlias: function() {
+          return this.name.replace(/^verb-(.*?)-generator/, '$1');
         }
       });
       assert.equal(env.alias, 'readme');
@@ -418,7 +462,7 @@ describe('functions', function() {
 
     it('should return true when val matches env.alias', function() {
       var env = base.createEnv('verb-readme-generator', function() {}, {
-        aliasFn: function() {
+        toAlias: function() {
           return 'foo';
         }
       });
@@ -428,7 +472,7 @@ describe('functions', function() {
 
     it('should return false when val does not match', function() {
       var env = base.createEnv('foo-bar-baz', new Base(), {
-        aliasFn: function() {
+        toAlias: function() {
           return 'foo';
         }
       });

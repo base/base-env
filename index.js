@@ -51,36 +51,32 @@ module.exports = function(config) {
         val = name;
       }
 
-      var opts = utils.extend({instance: this}, config, options);
+      var opts = utils.merge({instance: this}, config, options);
       if (typeof val === 'undefined') {
         opts.isPath = true;
         val = name;
       }
 
-      var aliasFn = opts.toAlias || this.toAlias || opts.alias;
-      delete opts.alias;
-      var res;
-
       function env(val) {
-        return utils.extend({ aliasFn: aliasFn }, opts, val);
+        return utils.merge({}, opts, val);
       }
 
       switch (utils.typeOf(val)) {
         case 'string':
-          res = new EnvPath(name, env({ path: val }), this);
+          this.env = new EnvPath(name, env({ path: val }), this);
           break;
         case 'object':
-          res = new EnvApp(name, env({ app: val }), this);
+          this.env = new EnvApp(name, env({ app: val }), this);
           break;
         case 'function':
-          res = new EnvFn(name, env({ fn: val }), this);
+          this.env = new EnvFn(name, env({ fn: val }), this);
           break;
         default: {
           throw new Error('cannot create env for "' + name + '" from "' + val + '"');
         }
       }
 
-      return res;
+      return this.env;
     });
 
     return baseEnv;
