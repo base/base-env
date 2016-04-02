@@ -56,6 +56,13 @@
     "plugins": [
       "gulp-format-md"
     ],
+    "related": {
+      "list": [
+        "base",
+        "base-runner",
+        "base-generators"
+      ]
+    },
     "reflinks": [
       "verb"
     ],
