@@ -72,7 +72,7 @@ describe('filepaths', function() {
       var env = base.createEnv('readme', fixtures('instance'));
       var app = new Base();
       env.invoke(app);
-      assert.deepEqual(env.invoke(app, app.base), env.app);
+      assert.deepEqual(env.invoke(app), env.app);
     });
   });
 
@@ -200,9 +200,15 @@ describe('filepaths', function() {
       assert.equal(env.path, path.resolve(gm, 'verb-readme-generator/index.js'));
     });
 
-    it('should not set `env.path` when path does not exist', function() {
-      var env = base.createEnv('npm:dfosfjsslkslkfr');
-      assert.equal(typeof env.path, 'undefined');
+    it('should throw when path does not exist', function(cb) {
+      try {
+        var env = base.createEnv('npm:dfosfjsslkslkfr');
+        env.path;
+        cb(new Error('expected an error'));
+      } catch (err) {
+        assert.equal(err.message, 'Cannot find module \'/Users/jonschlinkert/dev/base/base-env/node_modules/npm:dfosfjsslkslkfr\'');
+        cb();
+      }
     });
   });
 

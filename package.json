@@ -21,28 +21,30 @@
     "test": "mocha"
   },
   "dependencies": {
-    "base-plugins": "^0.4.5",
     "debug": "^2.2.0",
     "define-property": "^0.2.5",
     "extend-shallow": "^2.0.1",
-    "global-modules": "^0.2.0",
-    "is-absolute": "^0.2.3",
+    "global-modules": "^0.2.1",
+    "is-absolute": "^0.2.4",
     "kind-of": "^3.0.2",
     "lazy-cache": "^1.0.3",
+    "mixin-deep": "^1.1.3",
     "resolve": "^1.1.7"
   },
   "devDependencies": {
     "base": "^0.8.1",
     "base-option": "^0.7.0",
+    "base-plugins": "^0.4.10",
     "gulp": "^3.9.1",
     "gulp-eslint": "^2.0.0",
     "gulp-format-md": "^0.1.7",
     "gulp-istanbul": "^0.10.3",
     "gulp-mocha": "^2.2.0",
+    "gulp-unused": "^0.1.2",
     "has-glob": "^0.1.1",
-    "mocha": "*",
+    "mocha": "^2.4.5",
     "resolve-up": "^0.5.2",
-    "templates": "^0.15.9"
+    "templates": "^0.16.1"
   },
   "verb": {
     "run": true,

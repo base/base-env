@@ -52,7 +52,7 @@ describe('instances', function() {
       assert.equal(app.options.a, 'b');
       env.invoke({c: 'd'})
       assert.equal(app.options.a, 'b');
-      assert.equal(app.options.c, 'd');
+      assert.equal(typeof app.options.c, 'undefined');
     });
 
     it('should merge options onto the invoked instance using `app.option`', function() {

@@ -3,6 +3,7 @@
 require('mocha');
 var path = require('path');
 var Base = require('base');
+var namespace = require('../namespace');
 var plugins = require('base-plugins');
 var assert = require('assert');
 var env = require('..');
@@ -14,7 +15,9 @@ describe('functions', function() {
   beforeEach(function() {
     Base.use(plugins());
     Base.use(env());
+    Base.use(namespace());
     base = new Base();
+    base.isApp = true;
   });
 
   describe('createEnv', function() {
@@ -96,9 +99,10 @@ describe('functions', function() {
 
     it('should merge options onto the invoked instance', function() {
       base.foo = 'bar';
-      var env = base.createEnv('foo-bar-baz', function() {});
+      var env = base.createEnv('foo-bar-baz', function(app, base, env, options) {
+        assert.equal(options.c, 'd');
+      });
       env.invoke({c: 'd'});
-      assert.equal(base.options.c, 'd');
       assert.equal(env.app.foo, 'bar');
     });
 
@@ -106,23 +110,39 @@ describe('functions', function() {
       var foo = new Base();
       foo.options.a = 'b';
 
-      var env = base.createEnv('foo-bar-baz', function() {});
+      var env = base.createEnv('foo-bar-baz', function(app, base, env, options) {
+        assert.equal(options.a, 'b');
+        assert.equal(options.c, 'd');
+      });
+      env.invoke(foo, {c: 'd'})
+    });
+
+    it('should not merge options onto the app instance from the env instance', function() {
+      var foo = new Base();
+      foo.options.a = 'b';
+
+      var env = base.createEnv('foo-bar-baz', function(app, base, env, options) {
+        assert.equal(options.a, 'b');
+        assert.equal(options.c, 'd');
+      });
+
       assert.equal(typeof foo.options.c, 'undefined');
       assert.equal(foo.options.a, 'b');
       env.invoke(foo, {c: 'd'})
+
       assert.equal(foo.options.a, 'b');
-      assert.equal(foo.options.c, 'd');
+      assert.equal(typeof foo.options.c, 'undefined');
     });
 
     it('should expose the given instance as `app` to the invoked function', function() {
       var foo = new Base();
 
-      var env = base.createEnv('foo-bar-baz', function(app, first) {
+      var env = base.createEnv('foo', function(app) {
         app.x = 'z';
       });
 
-      env.invoke(foo, {c: 'd'})
-      assert.equal(foo.x, 'z');
+      env.invoke(foo)
+      assert.equal(typeof foo.x, 'undefined');
     });
 
     it('should expose the first instance as `base` to the invoked function', function() {
@@ -208,18 +228,21 @@ describe('functions', function() {
 
     it('should expose namespace on app', function() {
       var foo = new Base();
+      foo.is('foo');
       foo.a = 'a';
       var bar = new Base();
+      bar.is('bar');
       bar.b = 'b';
       bar.parent = foo;
       var baz = new Base();
+      baz.is('baz');
       baz.c = 'c';
       baz.parent = bar;
 
       var count = 0;
 
-      var env = base.createEnv('foo-bar-baz', function(app, base, env, options) {
-        assert.equal(app.namespace, 'foo-bar-baz');
+      var env = base.createEnv('whatever', function(app, base, env, options) {
+        assert.equal(app.namespace, 'foo.bar.baz.whatever');
         count++;
       });
 
@@ -229,18 +252,21 @@ describe('functions', function() {
 
     it('should expose namespace on the instance', function() {
       var foo = new Base();
+      foo.is('foo');
       foo.a = 'a';
       var bar = new Base();
+      bar.is('bar');
       bar.b = 'b';
       bar.parent = foo;
       var baz = new Base();
+      baz.is('baz');
       baz.c = 'c';
       baz.parent = bar;
 
       var count = 0;
 
-      var env = base.createEnv('foo-bar-baz', function(app, base, env, options) {
-        assert.equal(this.namespace, 'foo-bar-baz');
+      var env = base.createEnv('last', function(app, base, env, options) {
+        assert.equal(this.namespace, 'foo.bar.baz.last');
         count++;
       });
 
@@ -271,24 +297,30 @@ describe('functions', function() {
 
     it('should create namespace from parent namespaces', function() {
       var foo = new Base();
-      foo.namespace = 'foo';
       foo.a = 'a';
+      foo.alias = 'foo';
+
       var bar = new Base();
-      bar.namespace = 'bar';
       bar.b = 'b';
+      bar.alias = 'bar';
       bar.parent = foo;
+
       var baz = new Base();
       baz.c = 'c';
+      baz.alias = 'baz';
       baz.parent = bar;
 
+      var qux = new Base();
+      qux.alias = 'qux';
       var count = 0;
 
-      var env = base.createEnv('foo-bar-baz', function(app, base, env, options) {
-        assert.equal(this.namespace, 'foo.bar.foo-bar-baz');
+      var env = qux.createEnv('xyz', function(app, base, env, options) {
+        assert.equal(this.namespace, 'foo.bar.baz.xyz');
         count++;
       });
 
       env.invoke(baz);
+      assert.equal(qux.namespace, 'qux');
       assert.equal(count, 1);
     });
   });

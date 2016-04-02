@@ -38,7 +38,7 @@ module.exports = function(config) {
         throw new TypeError('expected name to be a string');
       }
 
-      if (utils.isApp(options)) {
+      if (utils.isAppArg(options)) {
         var temp = options;
         options = val;
         val = temp;
@@ -46,7 +46,7 @@ module.exports = function(config) {
 
       // if val is an object, and not an instance of `base`, then
       // we can assume it's an options object
-      if (utils.isObject(val) && !utils.isApp(val)) {
+      if (utils.isObject(val) && !utils.isAppArg(val)) {
         options = val;
         val = name;
       }
@@ -59,6 +59,7 @@ module.exports = function(config) {
 
       var aliasFn = opts.toAlias || this.toAlias || opts.alias;
       delete opts.alias;
+      var res;
 
       function env(val) {
         return utils.extend({ aliasFn: aliasFn }, opts, val);
@@ -66,19 +67,20 @@ module.exports = function(config) {
 
       switch (utils.typeOf(val)) {
         case 'string':
-          this.env = new EnvPath(name, env({ path: val }), this);
+          res = new EnvPath(name, env({ path: val }), this);
           break;
         case 'object':
-          this.env = new EnvApp(name, env({ app: val }), this);
+          res = new EnvApp(name, env({ app: val }), this);
           break;
         case 'function':
-          this.env = new EnvFn(name, env({ fn: val }), this);
+          res = new EnvFn(name, env({ fn: val }), this);
           break;
         default: {
           throw new Error('cannot create env for "' + name + '" from "' + val + '"');
         }
       }
-      return this.env;
+
+      return res;
     });
 
     return baseEnv;
@@ -90,7 +92,7 @@ function isValidInstance(app) {
   if (typeof fn === 'function' && !fn(app)) {
     return false;
   }
-  if (!app.isApp) {
+  if (app.isView || app.isList || app.isCollection || app.isItem) {
     return false;
   }
   if (app.isRegistered('base-env')) {
