@@ -38,6 +38,8 @@ module.exports = function(config) {
         throw new TypeError('expected name to be a string');
       }
 
+      options = options || {};
+
       if (utils.isAppArg(options)) {
         var temp = options;
         options = val;
