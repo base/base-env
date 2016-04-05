@@ -37,7 +37,7 @@ describe('functions', function() {
     });
 
     it('should support options as the last argument', function() {
-      var env = base.createEnv('foo', function() {}, {foo: 'bar'});
+      var env = base.createEnv('foo', function sllsls() {}, {foo: 'bar'});
       assert(env);
       assert.equal(env.foo, 'bar');
     });
@@ -50,11 +50,10 @@ describe('functions', function() {
   });
 
   describe('env.invoke', function() {
-    it('should throw an error when invoked and env.fn is not a function', function(cb) {
-      var env = base.createEnv(fixtures('not-exported'));
-      var app = new Base();
-
+    it('should throw an error when invoked with `app` and env.fn is not a function', function(cb) {
       try {
+        var env = base.createEnv(fixtures('not-exported'));
+        var app = new Base();
         env.invoke(app);
         cb(new Error('expected an error'));
       } catch (err) {
@@ -64,8 +63,8 @@ describe('functions', function() {
     });
 
     it('should throw an error when invoked and env.fn is not a function', function(cb) {
-      var env = base.createEnv(fixtures('not-exported'));
       try {
+        var env = base.createEnv(fixtures('not-exported'));
         env.invoke();
         cb(new Error('expected an error'));
       } catch (err) {
@@ -426,8 +425,8 @@ describe('functions', function() {
 
     it('should expose env as `this` to custom alias function', function() {
       var env = base.createEnv('verb-readme-generator', fixtures('verb-readme-generator'), {
-        toAlias: function() {
-          return this.name.replace(/^verb-(.*?)-generator/, '$1');
+        toAlias: function(name, env) {
+          return env.name.replace(/^verb-(.*?)-generator/, '$1');
         }
       });
       assert.equal(env.alias, 'readme');

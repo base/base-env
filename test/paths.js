@@ -6,6 +6,7 @@ var Base = require('base');
 var plugins = require('base-plugins');
 var gm = require('global-modules');
 var assert = require('assert');
+var namespace = require('../namespace');
 var baseEnv = require('..');
 var base;
 
@@ -13,6 +14,7 @@ var fixtures = path.resolve.bind(path, __dirname, 'fixtures');
 
 describe('filepaths', function() {
   beforeEach(function() {
+    Base.use(namespace());
     Base.use(plugins());
     Base.use(baseEnv());
     base = new Base();
@@ -51,7 +53,7 @@ describe('filepaths', function() {
 
     it('should show [path] when env is created from a path', function() {
       var env = base.createEnv('foo', fixtures('verb-readme-generator'));
-      assert(/<Env "foo" \[path\]>/.test(env.inspect()));
+      assert(/<Env "foo" \[path ~[\\\/].*\]>/.test(env.inspect()));
     });
   });
 
@@ -114,7 +116,7 @@ describe('filepaths', function() {
       assert.equal(typeof env.namespace, 'string');
     });
 
-    it('should set env.name to env.namespace', function() {
+    it('should set env.namespace with env.alias', function() {
       var env = base.createEnv('foo', fixtures('verb-readme-generator'));
       assert.equal(env.namespace, 'foo');
     });

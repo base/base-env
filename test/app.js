@@ -113,7 +113,7 @@ describe('instances', function() {
 
     it('should show [instance] when env is created from an instance', function() {
       var env = base.createEnv('foo', new Base());
-      assert(/<Env "foo" \[instance\]>/.test(env.inspect()));
+      assert(/<Env "foo" \[instance base\]>/.test(env.inspect()));
     });
   });
 
