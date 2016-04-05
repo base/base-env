@@ -6,7 +6,7 @@ var Base = require('base');
 var plugins = require('base-plugins');
 var gm = require('global-modules');
 var assert = require('assert');
-var namespace = require('../namespace');
+var namespace = require('base-namespace');
 var baseEnv = require('..');
 var base;
 

@@ -3,7 +3,7 @@
 require('mocha');
 var path = require('path');
 var Base = require('base');
-var namespace = require('../namespace');
+var namespace = require('base-namespace');
 var plugins = require('base-plugins');
 var assert = require('assert');
 var env = require('..');
@@ -16,8 +16,11 @@ describe('functions', function() {
     Base.use(plugins());
     Base.use(env());
     Base.use(namespace());
+    Base.use(function fn() {
+      this.isApp = true;
+      return fn;
+    });
     base = new Base();
-    base.isApp = true;
   });
 
   describe('createEnv', function() {

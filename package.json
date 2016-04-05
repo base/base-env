@@ -34,6 +34,7 @@
   },
   "devDependencies": {
     "base": "^0.8.1",
+    "base-namespace": "^0.1.0",
     "base-option": "^0.7.0",
     "base-plugins": "^0.4.10",
     "gulp": "^3.9.1",
