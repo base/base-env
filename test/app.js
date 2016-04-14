@@ -43,10 +43,10 @@ describe('instances', function() {
       assert.deepEqual(env.invoke(), env.app);
     });
 
-    it('should wrap exported instances in a function', function() {
+    it('should return undefined from the function from `env.fn`', function() {
       var env = base.createEnv(fixtures('instance'));
       assert.equal(typeof env.fn, 'function');
-      assert.deepEqual(env.fn(), require(fixtures('instance')));
+      assert.equal(typeof env.fn(), 'undefined');
     });
 
     it('should merge options onto the invoked instance', function() {
