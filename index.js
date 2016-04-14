@@ -18,7 +18,7 @@ module.exports = function(config) {
 
   return function baseEnv(app) {
     if (!isValidInstance(this)) return;
-    debug('initializing');
+    debug('initializing <%s>, called from <%s>', __filename, module.parent.id);
 
     /**
      * Create an `env` object with the given `name`, function, filepath
