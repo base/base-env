@@ -23,7 +23,6 @@
   "dependencies": {
     "debug": "^2.2.0",
     "define-property": "^0.2.5",
-    "extend-shallow": "^2.0.1",
     "global-modules": "^0.2.1",
     "is-absolute": "^0.2.5",
     "kind-of": "^3.0.2",
@@ -34,9 +33,10 @@
   },
   "devDependencies": {
     "base": "^0.8.1",
-    "base-namespace": "^0.1.0",
+    "base-namespace": "^0.1.1",
     "base-option": "^0.7.0",
     "base-plugins": "^0.4.10",
+    "extend-shallow": "^2.0.1",
     "gulp": "^3.9.1",
     "gulp-eslint": "^2.0.0",
     "gulp-format-md": "^0.1.8",
