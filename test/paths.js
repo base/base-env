@@ -219,7 +219,7 @@ describe('filepaths', function() {
         env.path;
         cb(new Error('expected an error'));
       } catch (err) {
-        assert.equal(err.message, 'Cannot find module \'/usr/local/lib/node_modules/dfosfjsslkslkfr\'');
+        assert.equal(err.message, 'Cannot find module \'' + path.resolve(gm, 'dfosfjsslkslkfr') + '\'');
         cb();
       }
     });
