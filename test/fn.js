@@ -60,7 +60,7 @@ describe('functions', function() {
         env.invoke(app);
         cb(new Error('expected an error'));
       } catch (err) {
-        assert.equal(err.message, 'expected a function or instance to be exported');
+        assert.equal(err.message, 'expected a function or instance to be exported from: /Users/jonschlinkert/dev/base/base-env/test/fixtures/not-exported/index.js');
         cb();
       }
     });
@@ -71,7 +71,7 @@ describe('functions', function() {
         env.invoke();
         cb(new Error('expected an error'));
       } catch (err) {
-        assert.equal(err.message, 'expected a function or instance to be exported');
+        assert.equal(err.message, 'expected a function or instance to be exported from: /Users/jonschlinkert/dev/base/base-env/test/fixtures/not-exported/index.js');
         cb();
       }
     });
@@ -450,7 +450,7 @@ describe('functions', function() {
         env.fn;
         cb(new Error('expected an error'));
       } catch (err) {
-        assert.equal(err.message, 'expected a function or instance to be exported');
+        assert.equal(err.message, 'expected a function or instance to be exported from: /Users/jonschlinkert/dev/base/base-env/test/fixtures/not-exported/index.js');
         cb();
       }
     });
