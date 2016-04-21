@@ -110,7 +110,7 @@ describe('functions', function() {
         assert.equal(options.a, 'b');
         assert.equal(options.c, 'd');
       });
-      env.invoke(foo, {c: 'd'})
+      env.invoke(foo, {c: 'd'});
     });
 
     it('should not merge options onto the app instance from the env instance', function() {
@@ -124,7 +124,7 @@ describe('functions', function() {
 
       assert.equal(typeof foo.options.c, 'undefined');
       assert.equal(foo.options.a, 'b');
-      env.invoke(foo, {c: 'd'})
+      env.invoke(foo, {c: 'd'});
 
       assert.equal(foo.options.a, 'b');
       assert.equal(typeof foo.options.c, 'undefined');

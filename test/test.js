@@ -1,14 +1,11 @@
 'use strict';
 
 require('mocha');
-var path = require('path');
 var Base = require('base');
 var plugins = require('base-plugins');
 var assert = require('assert');
 var baseEnv = require('..');
 var base;
-
-var fixtures = path.resolve.bind(path, __dirname, 'fixtures');
 
 describe('base-env', function() {
   beforeEach(function() {
