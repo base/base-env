@@ -17,7 +17,7 @@ module.exports = function(config) {
   config = config || {};
 
   return function baseEnv(app) {
-    if (!isValidInstance(this)) return;
+    if (!isValid(this)) return;
     debug('initializing <%s>, called from <%s>', __filename, module.parent.id);
 
     /**
@@ -85,15 +85,11 @@ module.exports = function(config) {
   };
 };
 
-function isValidInstance(app) {
-  var fn = app.options.validatePlugin;
-  if (typeof fn === 'function' && !fn(app)) {
+function isValid(app) {
+  if (!utils.isValidInstance(app)) {
     return false;
   }
-  if (app.isView || app.isList || app.isCollection || app.isItem) {
-    return false;
-  }
-  if (app.isRegistered('base-env')) {
+  if (utils.isRegistered(app, 'base-env')) {
     return false;
   }
   return true;

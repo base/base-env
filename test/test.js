@@ -9,6 +9,10 @@ var base;
 
 describe('base-env', function() {
   beforeEach(function() {
+    Base.use(function fn() {
+      this.isApp = true;
+      return fn;
+    });
     Base.use(plugins());
     base = new Base();
   });

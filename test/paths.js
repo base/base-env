@@ -14,6 +14,10 @@ var fixtures = path.resolve.bind(path, __dirname, 'fixtures');
 
 describe('filepaths', function() {
   beforeEach(function() {
+    Base.use(function fn() {
+      this.isApp = true;
+      return fn;
+    });
     Base.use(namespace());
     Base.use(plugins());
     Base.use(baseEnv());

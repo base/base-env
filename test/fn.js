@@ -13,13 +13,13 @@ var fixtures = path.resolve.bind(path, __dirname, 'fixtures');
 
 describe('functions', function() {
   beforeEach(function() {
-    Base.use(plugins());
-    Base.use(env());
-    Base.use(namespace());
     Base.use(function fn() {
       this.isApp = true;
       return fn;
     });
+    Base.use(plugins());
+    Base.use(env());
+    Base.use(namespace());
     base = new Base();
   });
 
