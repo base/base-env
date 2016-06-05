@@ -9,21 +9,29 @@
 
 var debug = require('debug')('base:base-env');
 var utils = require('./lib/utils');
-var EnvPath = require('./lib/path');
-var EnvApp = require('./lib/app');
-var EnvFn = require('./lib/fn');
+var Env = require('./lib/env');
 
 module.exports = function(config) {
   config = config || {};
 
-  return function baseEnv(app) {
-    if (!isValid(this)) return;
-    debug('initializing <%s>, called from <%s>', __filename, module.parent.id);
+  return function envPlugin(app) {
+    if (!utils.isValid(app)) return;
+    app.use(utils.namespace());
 
     /**
-     * Create an `env` object with the given `name`, function, filepath
-     * or app instance, and options.
+     * Create an `env` object with the given `name`, function, filepath or app instance,
+     * and options. See the [Env]() API docs below.
      *
+     * ```js
+     * var base = require('base');
+     * var env = require('base-env');
+     * var app = new Base();
+     * app.use(env());
+     *
+     * var env = app.createEnv('foo', function() {});
+     * ```
+     *
+     * @name createEnv
      * @param {String} `name`
      * @param {Object|Function|String} `val`
      * @param {Object} `options`
@@ -31,66 +39,35 @@ module.exports = function(config) {
      * @api public
      */
 
-    this.define('createEnv', function(name, val, options) {
+    app.define('createEnv', function(name, val, options) {
       debug('createEnv: "%s"', name);
-
-      if (name === '' || typeof name !== 'string') {
+      if (!utils.isString(name)) {
         throw new TypeError('expected name to be a string');
       }
 
-      options = options || {};
+      if (name === 'default') {
+        return new Env(name, val, this, options);
+      }
+
+      if (!utils.isValidArg(val)) {
+        val = {};
+      }
 
       if (utils.isAppArg(options)) {
-        var temp = options;
-        options = val;
-        val = temp;
+        return this.createEnv(name, options, val);
       }
 
-      // if val is an object, and not an instance of `base`, then
-      // we can assume it's an options object
-      if (utils.isObject(val) && !utils.isAppArg(val)) {
-        options = val;
-        val = name;
+      if (!utils.isAppArg(val)) {
+        return this.createEnv(name, name, val);
       }
 
-      var opts = utils.merge({instance: this}, config, options);
-      if (typeof val === 'undefined') {
-        opts.isPath = true;
-        val = name;
+      if (utils.isValidInstance(options)) {
+        return new Env(name, val, options, {});
+      } else {
+        return new Env(name, val, this, options);
       }
-
-      function env(val) {
-        return utils.merge({}, opts, val);
-      }
-
-      switch (utils.typeOf(val)) {
-        case 'string':
-          this.env = new EnvPath(name, env({ path: val }), this);
-          break;
-        case 'object':
-          this.env = new EnvApp(name, env({ app: val }), this);
-          break;
-        case 'function':
-          this.env = new EnvFn(name, env({ fn: val }), this);
-          break;
-        default: {
-          throw new Error('cannot create env for "' + name + '" from "' + val + '"');
-        }
-      }
-
-      return this.env;
     });
 
-    return baseEnv;
+    return envPlugin;
   };
 };
-
-function isValid(app) {
-  if (!utils.isValidInstance(app)) {
-    return false;
-  }
-  if (utils.isRegistered(app, 'base-env')) {
-    return false;
-  }
-  return true;
-}

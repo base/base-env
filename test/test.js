@@ -46,7 +46,7 @@ describe('base-env', function() {
         cb(new Error('expected an error'));
       } catch (err) {
         assert(err);
-        assert.equal(err.message, 'cannot create env for "foo" from "5"');
+        assert.equal(err.message, `cannot resolve: 'foo'`);
         cb();
       }
     });

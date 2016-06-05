@@ -31,13 +31,13 @@ describe('instances', function() {
     it('should support options as the last argument', function() {
       var env = base.createEnv('foo', new Base(), {foo: 'bar'});
       assert(env);
-      assert.equal(env.foo, 'bar');
+      assert.equal(env.options.foo, 'bar');
     });
 
     it('should support options as the second argument', function() {
       var env = base.createEnv('foo', {foo: 'bar'}, new Base());
       assert(env);
-      assert.equal(env.foo, 'bar');
+      assert.equal(env.options.foo, 'bar');
     });
   });
   
@@ -50,7 +50,10 @@ describe('instances', function() {
     it('should return undefined from the function from `env.fn`', function() {
       var env = base.createEnv(fixtures('instance'));
       assert.equal(typeof env.fn, 'function');
-      assert.equal(typeof env.fn(), 'undefined');
+      var inst = env.fn();
+      assert.equal(inst.a, 'a');
+      assert.equal(inst.b, 'b');
+      assert.equal(inst.c, 'c');
     });
 
     it('should merge options onto the invoked instance', function() {
@@ -62,7 +65,7 @@ describe('instances', function() {
       assert.equal(app.options.a, 'b');
       env.invoke({c: 'd'});
       assert.equal(app.options.a, 'b');
-      assert.equal(typeof app.options.c, 'undefined');
+      assert.equal(app.options.c, 'd');
     });
 
     it('should ', function() {
@@ -82,7 +85,8 @@ describe('instances', function() {
     });
 
     it('should merge options onto the invoked instance using `app.option`', function() {
-      var app = new Base();
+      var app = new Base({isApp: true});
+      app.foo = 'bar';
       app.use(option());
       app.options.a = 'b';
 
@@ -117,7 +121,7 @@ describe('instances', function() {
 
     it('should show [instance] when env is created from an instance', function() {
       var env = base.createEnv('foo', new Base());
-      assert(/<Env "foo" \[instance base\]>/.test(env.inspect()));
+      assert.equal(env.inspect(), '<Env "foo" [instance base]>');
     });
   });
 
@@ -130,14 +134,14 @@ describe('instances', function() {
 
     it('should set env.name to env.namespace', function() {
       var env = base.createEnv('foo', new Base());
-      assert.equal(env.namespace, 'foo');
+      assert.equal(env.namespace, 'base.foo');
     });
 
     it('should prefix env.namespace with parent.namespace', function() {
       var app = new Base();
-      app.namespace = 'abc';
+      app.alias = 'abc';
 
-      var env = base.createEnv('foo', new Base(), {parent: app});
+      var env = base.createEnv('foo', app);
       assert.equal(env.namespace, 'abc.foo');
     });
   });

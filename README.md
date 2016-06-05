@@ -1,6 +1,6 @@
 # base-env [![NPM version](https://img.shields.io/npm/v/base-env.svg?style=flat)](https://www.npmjs.com/package/base-env) [![NPM downloads](https://img.shields.io/npm/dm/base-env.svg?style=flat)](https://npmjs.org/package/base-env) [![Build Status](https://img.shields.io/travis/node-base/base-env.svg?style=flat)](https://travis-ci.org/node-base/base-env)
 
-> Base plugin, creates a normalized environment object from a function, filepath or instance of base.
+Base plugin, creates a normalized environment object from a function, filepath or instance of base.
 
 ## Install
 
@@ -21,8 +21,9 @@ base.use(env());
 
 ## API
 
-Create an `env` object with the given `name`, function, filepath
-or app instance, and options.
+### [createEnv](index.js#L42)
+
+Create an `env` object with the given `name`, function, filepath or app instance, and options. See the [Env](#Env) API docs below.
 
 **Params**
 
@@ -31,10 +32,60 @@ or app instance, and options.
 * `options` **{Object}**
 * `returns` **{Object}**
 
-### [.env.isMatch](lib/app.js#L60)
+**Example**
 
-Returns true if the given `str` matches `env.key`, `env.name` or `env.alias`. When env is created from a filepath, the following properties are also checked:
+```js
+var base = require('base');
+var env = require('base-env');
+var app = new Base();
+app.use(env());
 
+var env = app.createEnv('foo', function() {});
+```
+
+### [Env](lib/env.js#L35)
+
+Create an instance of `Env` with the given `name`, `fn`, `app` instance, and options. The `Env` class is used by [base-generators][] to handle some of the heavy lifting for resolving generators.
+
+**Params**
+
+* `name` **{String}**
+* `fn` **{Function|Object|String}**: Function to be lazily invoked, instance, or filepath that resolves to one of the other types when required.
+* `app` **{Object}**: Base instance to use for invocation context.
+* `options` **{Object}**
+
+**Example**
+
+```js
+var env = new Env('foo', function(app) {
+  // do stuff to app
+});
+```
+
+### [.invoke](lib/env.js#L62)
+
+Invoke `env.fn` with the given `context` and `options`.
+
+**Params**
+
+* `context` **{Object}**: The application instance to use for invoking `env.fn`
+* `opptions` **{Object}**
+* `returns` **{Object}**
+
+**Example**
+
+```js
+var app = new Base();
+env.fn(app, {doStuff: true});
+```
+
+### [.isMatch](lib/env.js#L112)
+
+Returns true if the given `str` matches any of the following properties, in order:
+
+* `env.key`
+* `env.name`
+* `env.alias`
 * `env.dirname`
 * `env.path`
 * `env.basename`
@@ -47,52 +98,53 @@ Returns true if the given `str` matches `env.key`, `env.name` or `env.alias`. Wh
 **Example**
 
 ```js
-var env = app.createEnv('foo', function() {});
-env.isMatch('bar');
-//=> false
+var env = new Env('foo', fucntion(){});
+console.log(env.isMatch('bar')) //=> false
+console.log(env.isMatch('foo')) //=> true
 ```
 
-### [.env.invoke](lib/app.js#L83)
+### [.isDefault](lib/env.js#L161)
 
-When `env` is created from an existing application instance, the instance is cached on `env.app` and `env.invoke` is a noop function that simply returns `env.app`.
+Getter that is set to `true` when the env being loaded is in the user's working directory.
 
-* `returns` **{Object}**: Returns the invoked instance.
+* `returns` **{Boolean}**
 
 **Example**
 
 ```js
-var foo = new Base();
-var bar = new Base();
-
-var env = foo.createEnv('bar', function() {});
-env.invoke(bar);
-//=> `env.fn` is invoked with `bar`
+var env = new Env('generator.js', generatorFn, {cwd: process.cwd()});
+console.log(env.isDefault);
+//=> true
 ```
+
+### [.namespace](lib/env.js#L192)
+
+Getter for resolving the `namespace` of an `env`. A namespace is
+created by joining the `namespace` from a parent instance (if exists)
+to `env.alias` (e.g. `parent.namespace + '.' + env.alias`).
+
+* `returns` **{String}**
 
 ## Related projects
 
 You might also be interested in these projects:
 
-* [base-generators](https://www.npmjs.com/package/base-generators): Adds project-generator support to your `base` application. | [homepage](https://github.com/node-base/base-generators)
-* [base-runner](https://www.npmjs.com/package/base-runner): Orchestrate multiple instances of base-methods at once. | [homepage](https://github.com/node-base/base-runner)
-* [base](https://www.npmjs.com/package/base): base is the foundation for creating modular, unit testable and highly pluggable node.js applications, starting… [more](https://www.npmjs.com/package/base) | [homepage](https://github.com/node-base/base)
+* [base](https://www.npmjs.com/package/base): base is the foundation for creating modular, unit testable and highly pluggable node.js applications, starting… [more](https://github.com/node-base/base) | [homepage](https://github.com/node-base/base "base is the foundation for creating modular, unit testable and highly pluggable node.js applications, starting with a handful of common methods, like `set`, `get`, `del` and `use`.")
+* [base-generators](https://www.npmjs.com/package/base-generators): Adds project-generator support to your `base` application. | [homepage](https://github.com/node-base/base-generators "Adds project-generator support to your `base` application.")
+* [base-runner](https://www.npmjs.com/package/base-runner): Orchestrate multiple instances of base-methods at once. | [homepage](https://github.com/node-base/base-runner "Orchestrate multiple instances of base-methods at once.")
 
 ## Contributing
 
-Pull requests and stars are always welcome. For bugs and feature requests, [please create an issue](https://github.com/jonschlinkert/base-env/issues/new).
+This document was generated by [verb](https://github.com/verbose/verb), please don't edit directly. Any changes to the readme must be made in [.verb.md](.verb.md). See [Building Docs](#building-docs).
+
+Pull requests and stars are always welcome. For bugs and feature requests, [please create an issue](https://github.com/node-base/base-env/issues/new).
 
 ## Building docs
 
 Generate readme and API documentation with [verb](https://github.com/verbose/verb):
 
 ```sh
-$ npm install verb && npm run docs
-```
-
-Or, if [verb](https://github.com/verbose/verb) is installed globally:
-
-```sh
-$ verb
+$ npm install -g verb verb-readme-generator && verb
 ```
 
 ## Running tests
@@ -117,4 +169,4 @@ Released under the [MIT license](https://github.com/node-base/base-env/blob/mast
 
 ***
 
-_This file was generated by [verb](https://github.com/verbose/verb), v0.9.0, on April 21, 2016._
+_This file was generated by [verb](https://github.com/verbose/verb), v0.9.0, on June 05, 2016._
