@@ -34,7 +34,8 @@
     "kind-of": "^3.0.3",
     "lazy-cache": "^2.0.1",
     "os-homedir": "^1.0.1",
-    "resolve-file": "github:jonschlinkert/resolve-file"
+    "resolve-file": "github:jonschlinkert/resolve-file",
+    "vinyl": "^1.1.1"
   },
   "devDependencies": {
     "base": "^0.9.0",

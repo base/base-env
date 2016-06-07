@@ -58,7 +58,7 @@ module.exports = function(config) {
       }
 
       if (!utils.isAppArg(val)) {
-        return this.createEnv(name, name, val);
+        return this.createEnv(name, name, utils.extend(val, options));
       }
 
       if (utils.isValidInstance(options)) {

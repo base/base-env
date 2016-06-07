@@ -149,19 +149,9 @@ describe('filepaths', function() {
   });
 
   describe('env.isDefault', function() {
-    it('should set isDefault to true when path.dirname === env.cwd', function() {
-      var env = base.createEnv('index.js');
-      assert(env.isDefault);
-    });
-
     it('should set isDefault to false when a name is passed', function() {
       var env = base.createEnv('foo', 'index.js');
       assert.equal(env.isDefault, false);
-    });
-
-    it('should set name to default when isDefault is true', function() {
-      var env = base.createEnv('index.js');
-      assert.equal(env.name, 'default');
     });
 
     it('should not set name to default when an explicit name is passed', function() {
@@ -175,7 +165,7 @@ describe('filepaths', function() {
     });
 
     it('should set name to default when the name is default outside working directory', function() {
-      var env = base.createEnv('default', path.resolve(__dirname, 'verb-readme-generator/index.js'));
+      var env = base.createEnv('default', path.resolve(__dirname, 'fixtures/verb-readme-generator/index.js'));
       assert.equal(env.key, 'default');
       assert.equal(env.alias, 'default');
       assert.equal(env.name, 'default');
@@ -306,7 +296,7 @@ describe('filepaths', function() {
 
     it('should set the alias on `env.alias` when one arg is passed', function() {
       var env = base.createEnv(fixtures('verb-readme-generator'));
-      assert.equal(env.alias, 'verb-readme-generator');
+      assert.equal(env.alias, fixtures('verb-readme-generator'));
     });
 
     it('should support a custom alias function', function() {
