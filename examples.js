@@ -1,7 +1,7 @@
 'use strict';
 
 var Base = require('base');
-var Env = require('./env');
+var Env = require('./lib/env');
 
 function generator(app, base, options, env) {
   console.log(arguments);
@@ -9,4 +9,4 @@ function generator(app, base, options, env) {
 var app = new Base({isApp: true});
 var env = new Env('generate-foo', generator, app);
 
-console.log(env.invoke())
+console.log(env.invoke());
