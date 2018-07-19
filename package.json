@@ -1,7 +1,7 @@
 {
   "name": "base-env",
   "description": "Base plugin, creates a normalized environment object from a function, filepath or instance of base.",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "homepage": "https://github.com/base/base-env",
   "author": "Jon Schlinkert (https://github.com/jonschlinkert)",
   "contributors": [
