@@ -1,7 +1,7 @@
 {
   "name": "base-env",
   "description": "Base plugin, creates a normalized environment object from a function, filepath or instance of base.",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "homepage": "https://github.com/node-base/base-env",
   "author": "Jon Schlinkert (https://github.com/jonschlinkert)",
   "repository": "node-base/base-env",
@@ -34,7 +34,7 @@
     "kind-of": "^3.0.3",
     "lazy-cache": "^2.0.1",
     "os-homedir": "^1.0.1",
-    "resolve-file": "github:jonschlinkert/resolve-file"
+    "resolve-file": "^0.3.0"
   },
   "devDependencies": {
     "base": "^0.9.0",
