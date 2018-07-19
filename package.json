@@ -35,7 +35,6 @@
     "is-valid-app": "^0.1.0",
     "is-valid-instance": "^0.1.0",
     "kind-of": "^3.0.3",
-    "lazy-cache": "^2.0.1",
     "os-homedir": "^1.0.1",
     "resolve-file": "^0.3.0"
   },
