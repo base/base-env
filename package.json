@@ -1,18 +1,21 @@
 {
   "name": "base-env",
   "description": "Base plugin, creates a normalized environment object from a function, filepath or instance of base.",
-  "version": "0.3.1",
-  "homepage": "https://github.com/node-base/base-env",
+  "version": "0.3.0",
+  "homepage": "https://github.com/base/base-env",
   "author": "Jon Schlinkert (https://github.com/jonschlinkert)",
-  "repository": "node-base/base-env",
+  "contributors": [
+    "Brian Woodward (https://twitter.com/doowb)",
+    "Jon Schlinkert (http://twitter.com/jonschlinkert)"
+  ],
+  "repository": "base/base-env",
   "bugs": {
-    "url": "https://github.com/node-base/base-env/issues"
+    "url": "https://github.com/base/base-env/issues"
   },
   "license": "MIT",
   "files": [
     "index.js",
-    "lib",
-    "utils.js"
+    "lib"
   ],
   "main": "index.js",
   "engines": {
